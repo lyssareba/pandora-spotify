@@ -1,0 +1,31 @@
+{
+  "name": "pandora-spotify",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": "6.11.2"
+  },
+  "dependencies": {
+    "axios": "^0.17.1",
+    "browserify": "^14.5.0",
+    "express": "^4.16.2",
+    "mongodb": "^2.2.33",
+    "node-jsx": "^0.13.3",
+    "react": "^16.1.1",
+    "react-dom": "^16.1.1",
+    "react-scripts": "1.0.17"
+  },
+  "scripts": {
+    "plog": "server start nightwatch --config nightwatch.conf.js",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "./node_modules/.bin/nightwatch",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "chromedriver": "^2.33.2",
+    "eslint": "^4.11.0",
+    "nightwatch": "^0.9.16",
+    "selenium-download": "^2.0.10"
+  }
+}
