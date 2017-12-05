@@ -35,55 +35,14 @@ class App extends Component {
       'data' : {
         "existingAuthToken": null,
         "keepLoggedIn": true,
-        'password': 'asdfhole34',
-        'username': 'lyssareba@gmail.com'  
+        'password': '########',
+        'username': '########'  
       }
     });
-    //console.log(temp.get(myURL));
     axios.get(myURL).then((res) => {
-    // temp.post(myURL).then((res) => {
       let data = res;
       console.log(data);
     });
-
-    // axios.post(proxy+baseURL, {
-    //   "existingAuthToken": null,
-    //   "keepLoggedIn": true,
-    //   "password": "asdfhole34",
-    //   "username": "lyssareba@gmail.com",
-    //   "headers": {
-    //     'Content-Type' : 'application/json',
-    //     'X-CsrfToken' : 'd58986a9d20f83b4',
-    //     'X-AuthToken' : '',
-    //   },
-    // })
-    // .then((res)=> {
-    //   let data = res;
-    //   console.log(data);
-    //   return;
-    // });
-    // const mainRequest = axios.create({
-    //   baseURL: proxy + baseURL,
-    //   method: 'post',
-    //   withCredentials: true,
-    //   data: {
-    //     "existingAuthToken": null,
-    //     "keepLoggedIn": true,
-    //     "password": "asdfhole34",
-    //     "username": "lyssareba@gmail.com"
-    //   },
-    //   headers: {
-    //     'Content-Type' : 'application/json',
-    //     'X-CsrfToken' : 'd58986a9d20f83b4',
-    //     'X-AuthToken' : {authToken},
-    //   },
-    // });
-    // mainRequest.post('/v1/auth/login')
-    // .then((res) => {
-    //   let data = res;
-    //   //this.setState({ data : data });
-    //   console.log(data);
-    // });
   }
   render() {
     return (
