@@ -1,13 +1,21 @@
 var config = require('../../nightwatch.conf.js');
+const writeJsonFile = require('write-json-file');
+var fs = require('fs');
+
 var user = {
   sessionID: '',
   username: '',
   password: '',
-  thumbsup: {},
+  thumbsup: [],
 }
+var songData = {
+  song: '',
+  artist: '',
+  radio: '',
+};
 var endOfPage = false;
 var y;
-var mediaListId=[];
+var mediaList=[];
 var thumbsUp;
 var elementNum;
 
@@ -49,18 +57,22 @@ module.exports = {
       thumbsUp=res.value;
     })
     .pause(1000)
-    .waitForElementVisible("(//*/div[@class='MediaListItem'])[1]")
-    .element('xpath', "(//*/div[@class='MediaListItem'])[1]", function(songs) {
-      var regex = new RegExp(/(\.)\d+/, 'g');
-      var regex2 = new RegExp(/(\-)\d+/, 'g');
-      user.sessionID = songs.value.ELEMENT.match(regex);
-      var temp = songs.value.ELEMENT.match(regex2);
-      elementNum = temp[0].slice(1);
-      mediaListId=getSongId();
-      browser.pause(5000);
-      user.thumbsup=getSongData();
+    .waitForElementVisible("(//*/a[@class='MediaListItem__primaryText'])[1]")
+    .getText('xpath', "(//*/a[@class='MediaListItem__primaryText'])", function(songs) {
+      getSongData();
+      browser.pause(2000);
+    // var regex = new RegExp(/(\.)\d+/, 'g');
+    // var regex2 = new RegExp(/(\-)\d+/, 'g');
+    // user.sessionID = songs.value.ELEMENT.match(regex);
+    // var temp = songs.value.ELEMENT.match(regex2);
+    // elementNum = temp[0].slice(1);
+    // mediaListId=getSongId();
+    // browser.pause(5000);
+    // user.thumbsup=getSongData();
     })
-
+    .pause(1500)
+    .end();
+  
     function getSongId() {
       var id = [];
       var end = parseInt(thumbsUp) + parseInt(elementNum) - 1;
@@ -72,57 +84,45 @@ module.exports = {
       return id;
     }
     function getSongData(){
-      var inView;
-      var songData= [];
-      console.log(mediaListId[0]);
-      browser.elementIdValue(mediaListId[0], function(res){
-        console.log(res);
-      })
-      
-      //  for(var i = 0; i <mediaListId.length-1; i++){
-      //    if(browser.elementIdLocationInView(mediaListId[i])){
-      //      inView=true;
-      //    } else {
-      //      inView=false;
-      //    }
-
-      //    if(inView){
-      //      browser.elementIdValue(mediaListId[i], function(res){
-      //        console.log(res);
-      //      })
-      //     //  songData.push()
-      //    } else {
-      //      browser.execute('scrollBy(200, 0)');
-      //      i--;
-      //    }
-      //   }
-       
-
+      var end = parseInt(thumbsUp) - 1;
+      var start = 1;
+      for(var i = start; i < 10; i++){
+        browser
+        .getText('xpath', "(//*[@class='MediaListItem__primaryText'])[" + i + "]", function(song) {
+          songData.song = song.value;
+        })
+        .getText('xpath', "(//*[@class='MediaListItem__secondaryText'])[" + i + "]", function(artist) {
+          songData.artist = artist.value;
+        })
+        .getText('xpath', "(//*[@class='MediaListItem__tertiaryText'])[" + i + "]", function(radio) {
+          songData.radio = radio.value;
+          console.log(songData);
+          mediaList.push(songData); 
+          writeToFile(songData);
+        }) 
+        .execute('scrollBy(0, 200)')
+        // JSON.stringify(mediaList);
+        // writeJsonFile('songs2.json', songData);
+      }
       return;
     }
-
-    //         browser.getLocationInView("(//*/div[@class='MediaListItem'])["+i+"]", function(res){
-    //           y = res.value.y
-    //           browser.pause(2000)
-    //           if(y>600){
-    //             browser.execute('scrollTo(0,600)')
-    //           };
-    //         })
-    //       };
-
-    //       if(songs.value[i].ELEMENT != undefined){
-    //         mediaListId.push(songs.value[i].ELEMENT);
-    //         browser.getLocationInView("(//*/div[@class='MediaListItem'])["+i+"]", function(res){
-    //           y = res.value.y
-    //           browser.pause(2000)
-    //           if(y>600){
-    //             browser.execute('scrollTo(0,600)')
-    //           };
-    //         })
-    //       };
-    //     };
-    //   }
-    // })
-    browser.pause(2000)
+    function writeToFile(data){
+      fs.readFile('songs.json', function (err, res) {
+        console.log(res);
+        if(Object.keys(res).length === 0 && res.constructor === Object){
+          console.log (err);
+          var json = (data instanceof Object) ? JSON.stringify(data,null,4): data ;
+          fs.writeFile('songs.json', json, 'utf-8');
+        } else {
+          var obj = [];
+          obj = JSON.parse(res);
+          obj.push(data);
+          var json = (data instanceof Object) ? JSON.stringify(obj,null,4): data ;
+          fs.writeFile('songs.json', json, 'utf-8');
+          console.log("written");
+        }
+      })
+      return;
+    }
   }
 };
